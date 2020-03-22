@@ -1,6 +1,6 @@
 // Caso o componente não tenha estado, utilizar um componente funcional 
 import React from 'react'
-import { View, Text, StyleSheet} from 'react-native'
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import commonStyles from '../commonStyles'
@@ -19,9 +19,13 @@ export default props => {
     return (
         //O Componente Texto recebe uma propriedade vinda do TaskList
         <View style={styles.container}>
-            <View style={styles.checkContainer}>
-                {getCheckView(props.doneAt)}
-            </View>
+            <TouchableWithoutFeedback 
+            //Funcao callback passando como parametro para o TaskList(Pai) o id da task recebida
+            onPress={() => props.toggleTask(props.id)}>
+                <View style={styles.checkContainer}>
+                    {getCheckView(props.doneAt)}
+                </View>
+            </TouchableWithoutFeedback>
             <View>
                 <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
                 <Text style={styles.date}>{formattedDate}</Text>
@@ -36,7 +40,6 @@ function getCheckView(doneAt) {
         return (
             <View style={styles.done}>
                 <Icon name='check' size={20} color='#FFF'></Icon>
-
             </View>
         )
     } else {
