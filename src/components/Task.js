@@ -12,23 +12,29 @@ export default props => {
     //Se a tarefa estive concluida mostra o texto com uma linha
     const doneOrNotStyle = props.doneAt != null ? { textDecorationLine: 'line-through' } : {}
 
-    const date = props.doneAt ? props.doneAt : props.estimateAt
-    const formattedDate = moment(date).locale('pt-br')
+    const dateAgendado =  props.estimateAt
+    const dateFim = props.doneAt
+
+    const formattedDateAgendado = moment(dateAgendado).locale('pt-br')
         .format('ddd, D [de] MMMM')
+
+    const formattedDateFinalizado = props.doneAt ? moment(dateFim).locale('pt-br')
+        .format('ddd, D [de] MMMM') : ""
 
     return (
         //O Componente Texto recebe uma propriedade vinda do TaskList
         <View style={styles.container}>
-            <TouchableWithoutFeedback 
-            //Funcao callback passando como parametro para o TaskList(Pai) o id da task recebida
-            onPress={() => props.toggleTask(props.id)}>
+            <TouchableWithoutFeedback
+                //Funcao callback passando como parametro para o TaskList(Pai) o id da task recebida
+                onPress={() => props.toggleTask(props.id)}>
                 <View style={styles.checkContainer}>
                     {getCheckView(props.doneAt)}
                 </View>
             </TouchableWithoutFeedback>
             <View>
                 <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text style={styles.date}>{formattedDate}</Text>
+                <Text style={styles.date}>Estimado: {formattedDateAgendado}</Text>
+                {props.doneAt ? <Text style={styles.date}>Finalizado: {formattedDateFinalizado}</Text> : <Text></Text>}
             </View>
         </View>
     )
