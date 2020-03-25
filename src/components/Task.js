@@ -1,6 +1,13 @@
 // Caso o componente não tenha estado, utilizar um componente funcional 
 import React from 'react'
-import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableWithoutFeedback,
+    TouchableOpacity
+} from 'react-native'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import commonStyles from '../commonStyles'
@@ -12,7 +19,7 @@ export default props => {
     //Se a tarefa estive concluida mostra o texto com uma linha
     const doneOrNotStyle = props.doneAt != null ? { textDecorationLine: 'line-through' } : {}
 
-    const dateAgendado =  props.estimateAt
+    const dateAgendado = props.estimateAt
     const dateFim = props.doneAt
 
     const formattedDateAgendado = moment(dateAgendado).locale('pt-br')
@@ -21,22 +28,44 @@ export default props => {
     const formattedDateFinalizado = props.doneAt ? moment(dateFim).locale('pt-br')
         .format('ddd, D [de] MMMM') : ""
 
+    const getRightContent = () => {
+        return (
+            <TouchableOpacity style={styles.swipeRight} onPress={() => props.onDelete && props.onDelete(props.id)}>
+                <Icon name='trash' size={30} color='#FFF' />
+            </TouchableOpacity>
+        )
+    }
+
+    const getLeftContent = () => {
+        return (
+            <View style={styles.swipeLeft}>
+                <Icon name='trash' size={20} color='#FFF' style={styles.excludeIcon} />
+                <Text style={styles.excludeText}>Excluir</Text>
+            </View>
+        )
+    }
+
     return (
         //O Componente Texto recebe uma propriedade vinda do TaskList
-        <View style={styles.container}>
-            <TouchableWithoutFeedback
-                //Funcao callback passando como parametro para o TaskList(Pai) o id da task recebida
-                onPress={() => props.toggleTask(props.id)}>
-                <View style={styles.checkContainer}>
-                    {getCheckView(props.doneAt)}
+        <Swipeable
+            renderRightActions={getRightContent}
+            renderLeftActions={getLeftContent}
+            onSwipeableLeftOpen={() => props.onDelete && props.onDelete(props.id)}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback
+                    //Funcao callback passando como parametro para o TaskList(Pai) o id da task recebida
+                    onPress={() => props.toggleTask(props.id)}>
+                    <View style={styles.checkContainer}>
+                        {getCheckView(props.doneAt)}
+                    </View>
+                </TouchableWithoutFeedback>
+                <View>
+                    <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
+                    <Text style={styles.date}>Estimado: {formattedDateAgendado}</Text>
+                    {props.doneAt ? <Text style={styles.date}>Finalizado: {formattedDateFinalizado}</Text> : <Text style={styles.date}></Text>}
                 </View>
-            </TouchableWithoutFeedback>
-            <View>
-                <Text style={[styles.desc, doneOrNotStyle]}>{props.desc}</Text>
-                <Text style={styles.date}>Estimado: {formattedDateAgendado}</Text>
-                {props.doneAt ? <Text style={styles.date}>Finalizado: {formattedDateFinalizado}</Text> : <Text></Text>}
             </View>
-        </View>
+        </Swipeable >
     )
 }
 
@@ -63,7 +92,8 @@ const styles = StyleSheet.create({
         borderColor: '#AAA',
         borderBottomWidth: 1,
         alignItems: 'center',
-        paddingVertical: 10
+        paddingVertical: 10,
+        backgroundColor: '#FFF'
     },
     checkContainer: {
         width: '20%',
@@ -96,6 +126,30 @@ const styles = StyleSheet.create({
         fontFamily: commonStyles.fontFamily,
         color: commonStyles.colors.subText,
         fontSize: 12
+    },
+    swipeRight: {
+        backgroundColor: 'red',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+        paddingHorizontal: 20,
+    },
+    swipeLeft: {
+        backgroundColor: 'red',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        paddingHorizontal: 20,
+        flex: 1
+    },
+    excludeText: {
+        fontFamily: commonStyles.fontFamily,
+        color: '#FFF',
+        fontSize: 20,
+        margin: 10
+    },
+    excludeIcon: {
+        marginLeft: 10
     }
 
 })
