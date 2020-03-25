@@ -65,7 +65,7 @@ export default props => {
                     {props.doneAt ? <Text style={styles.date}>Finalizado: {formattedDateFinalizado}</Text> : <Text style={styles.date}></Text>}
                 </View>
             </View>
-        </Swipeable >
+        </Swipeable>
     )
 }
 
